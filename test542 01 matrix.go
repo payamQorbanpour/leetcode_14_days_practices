@@ -9,36 +9,39 @@ func main() {
 }
 
 func updateMatrix(mat [][]int) [3][3]int {
-	var resultMatrix = [3][3]int{}
+	m, n := len(mat), len(mat[0])
+	var resultMat = [3][3]int{}
 
-	for i := 0; i < len(mat); i++ {
-		for j := 0; j < len(mat[0]); j++ {
-			result := 0
+	if m == 0 {
+		return resultMat
+	}
 
-			if mat[i][j] == 1 {
-				result = min(result, dfs(i, j, mat))
-				resultMatrix[i][j] = result
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if mat[i][j] == 0 {
+				resultMat[i][j] = 0
+			} else {
+				if i > 0 {
+					resultMat[i][j] = min(resultMat[i][j], resultMat[i-1][j]+1)
+				}
+				if j > 0 {
+					resultMat[i][j] = min(resultMat[i][j], resultMat[i][j-1]+1)
+				}
 			}
 		}
 	}
 
-	return resultMatrix
-}
-
-func dfs(i, j int, mat [][]int) int {
-	m, n := len(mat), len(mat[0])
-
-	if i < 0 || j < 0 || i >= m || j >= n {
-		return 0
+	for i := m - 1; i >= 0; i-- {
+		for j := n - 1; j >= 0; j-- {
+			if i < m-1 {
+				resultMat[i][j] = min(resultMat[i][j], resultMat[i+1][j]+1)
+			}
+			if j < n-1 {
+				resultMat[i][j] = min(resultMat[i][j], resultMat[i][j+1]+1)
+			}
+		}
 	}
-
-	if mat[i][j] == 0 {
-		return 1
-	}
-
-	mat[i][j] = 0
-	x := 1 + dfs(i-1, j, mat) + dfs(i+1, j, mat) + dfs(i, j+1, mat) + dfs(i, j-1, mat)
-	return x
+	return resultMat
 }
 
 func min(m, n int) int {
